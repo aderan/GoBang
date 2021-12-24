@@ -10,7 +10,6 @@ import com.xuf.www.gobang.bean.Message;
  */
 public class NetInteractor {
 
-
     public boolean init() {
         return true;
     }

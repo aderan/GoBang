@@ -2,6 +2,7 @@ package com.xuf.www.gobang.presenter;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.herewhite.sdk.WhiteboardView;
 import com.peak.salut.SalutDevice;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface INetView {
     void onDataReceived(Object o);
 
     void onSendMessageFailed();
+
+    WhiteboardView getWhiteboard();
 }

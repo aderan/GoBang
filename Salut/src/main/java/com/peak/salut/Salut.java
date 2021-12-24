@@ -14,8 +14,9 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.net.wifi.p2p.nsd.WifiP2pServiceInfo;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.arasthel.asyncjob.AsyncJob;
 import com.peak.salut.Callbacks.SalutCallback;
@@ -290,7 +291,7 @@ public class Salut implements WifiP2pManager.ConnectionInfoListener{
 
     }
 
-    private void sendData(final SalutDevice device, final Object data, @Nullable final SalutCallback onFailure)
+    private void sendData(final SalutDevice device, final Object data, final SalutCallback onFailure)
     {
         BackgroundDataSendJob sendDataToDevice = new BackgroundDataSendJob(device, this, data, onFailure);
         AsyncJob.doInBackground(sendDataToDevice);

@@ -2,7 +2,7 @@ package com.xuf.www.gobang.view.fragment;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,23 +10,24 @@ import android.view.ViewGroup;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.herewhite.sdk.WhiteboardView;
 import com.peak.salut.SalutDevice;
 import com.squareup.otto.Subscribe;
+import com.xuf.www.gobang.EventBus.ConnectPeerEvent;
+import com.xuf.www.gobang.EventBus.ExitGameAckEvent;
 import com.xuf.www.gobang.EventBus.MoveBackAckEvent;
+import com.xuf.www.gobang.EventBus.RestartGameAckEvent;
+import com.xuf.www.gobang.EventBus.WifiBeginWaitingEvent;
+import com.xuf.www.gobang.EventBus.WifiCancelCompositionEvent;
+import com.xuf.www.gobang.EventBus.WifiCancelPeerEvent;
+import com.xuf.www.gobang.EventBus.WifiCancelWaitingEvent;
+import com.xuf.www.gobang.EventBus.WifiCreateGameEvent;
+import com.xuf.www.gobang.EventBus.WifiJoinGameEvent;
 import com.xuf.www.gobang.R;
 import com.xuf.www.gobang.bean.Message;
 import com.xuf.www.gobang.bean.Point;
 import com.xuf.www.gobang.presenter.INetView;
 import com.xuf.www.gobang.presenter.NetPresenter;
-import com.xuf.www.gobang.EventBus.ConnectPeerEvent;
-import com.xuf.www.gobang.EventBus.ExitGameAckEvent;
-import com.xuf.www.gobang.EventBus.RestartGameAckEvent;
-import com.xuf.www.gobang.EventBus.WifiBeginWaitingEvent;
-import com.xuf.www.gobang.EventBus.WifiCancelCompositionEvent;
-import com.xuf.www.gobang.EventBus.WifiCancelWaitingEvent;
-import com.xuf.www.gobang.EventBus.WifiCreateGameEvent;
-import com.xuf.www.gobang.EventBus.WifiJoinGameEvent;
-import com.xuf.www.gobang.EventBus.WifiCancelPeerEvent;
 import com.xuf.www.gobang.util.GameJudger;
 import com.xuf.www.gobang.util.MessageWrapper;
 import com.xuf.www.gobang.util.OperationQueue;
@@ -62,6 +63,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     private ButtonRectangle mMoveBack;
 
     private static final String NET_MODE = "netMode";
+    private WhiteboardView mWhiteboard;
 
     public static NetGameFragment newInstance(int netMode) {
         NetGameFragment netGameFragment = new NetGameFragment();
@@ -74,7 +76,6 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        init();
     }
 
     @Override
@@ -88,7 +89,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         initView(view);
-
+        init();
         return view;
     }
 
@@ -106,6 +107,8 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
         mMoveBack = (ButtonRectangle) view.findViewById(R.id.btn_move_back);
         mMoveBack.setOnClickListener(this);
         mMoveBack.setText(makeMoveBackString());
+
+        mWhiteboard = (WhiteboardView) view.findViewById(R.id.whiteboard);
     }
 
     private void init() {
@@ -290,6 +293,11 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     }
 
     @Override
+    public WhiteboardView getWhiteboard() {
+        return mWhiteboard;
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_restart:
@@ -361,7 +369,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
         getActivity().finish();
     }
 
-    @Subscribe
+    @Subscribe()
     public void onConnectPeer(ConnectPeerEvent event) {
         if (mCanClickConnect) {
             mNetPresenter.connectToHost(event.mSalutDevice, event.mBlueToothDevice);
@@ -378,7 +386,6 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     public void onBeginGame(WifiBeginWaitingEvent event) {
         Message begin = MessageWrapper.getHostBeginMessage();
         sendMessage(begin);
-
     }
 
     @Subscribe

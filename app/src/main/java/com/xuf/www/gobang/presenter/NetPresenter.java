@@ -7,6 +7,7 @@ import com.peak.salut.SalutDevice;
 import com.xuf.www.gobang.bean.Message;
 import com.xuf.www.gobang.interator.NetInteractor;
 import com.xuf.www.gobang.interator.BlueToothInteractor;
+import com.xuf.www.gobang.interator.WhiteboardInteractor;
 import com.xuf.www.gobang.interator.WifiInteractor;
 import com.xuf.www.gobang.util.Constants;
 
@@ -25,7 +26,7 @@ public class NetPresenter implements INetInteratorCallback {
         mNetView = netView;
         mGameMode = gameMode;
         if (isWifiMode()) {
-            mNetInteractor = new WifiInteractor(context, this);
+            mNetInteractor = new WhiteboardInteractor(context, mNetView.getWhiteboard(), this);
         } else {
             mNetInteractor = new BlueToothInteractor(context, this);
         }

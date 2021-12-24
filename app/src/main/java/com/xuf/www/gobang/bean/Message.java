@@ -1,7 +1,5 @@
 package com.xuf.www.gobang.bean;
 
-import android.os.Build;
-
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 

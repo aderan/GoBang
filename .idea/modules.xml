@@ -3,10 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GoBang.iml" filepath="$PROJECT_DIR$/GoBang.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MaterialDesign/MaterialDesign.iml" filepath="$PROJECT_DIR$/MaterialDesign/MaterialDesign.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Salut/Salut.iml" filepath="$PROJECT_DIR$/Salut/Salut.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MaterialDesign/GoBang.MaterialDesign.iml" filepath="$PROJECT_DIR$/.idea/modules/MaterialDesign/GoBang.MaterialDesign.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Salut/GoBang.Salut.iml" filepath="$PROJECT_DIR$/.idea/modules/Salut/GoBang.Salut.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GoBang.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GoBang.app.iml" />
     </modules>
   </component>
 </project>
-

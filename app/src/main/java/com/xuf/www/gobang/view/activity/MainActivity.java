@@ -1,6 +1,6 @@
 package com.xuf.www.gobang.view.activity;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.xuf.www.gobang.util.ToastUtil;
 import com.xuf.www.gobang.view.fragment.MainFragment;

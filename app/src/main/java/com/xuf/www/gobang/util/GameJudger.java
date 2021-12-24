@@ -1,7 +1,5 @@
 package com.xuf.www.gobang.util;
 
-import android.text.BoringLayout;
-
 /**
  * Created by Administrator on 2016/1/27.
  */
@@ -15,8 +13,10 @@ public class GameJudger {
     }
 
     public static boolean isGameEnd(int[][] board, int x, int y) {
-        if (getLinkCount(board, x, y, DIRECT.VERTICAL) == 5 || getLinkCount(board, x, y, DIRECT.HORIZONTAL) == 5
-                || getLinkCount(board, x, y, DIRECT.LEFT_TILT) == 5 || getLinkCount(board, x, y, DIRECT.RIGHT_TILT) == 5) {
+        if (getLinkCount(board, x, y, DIRECT.VERTICAL) == 5
+                || getLinkCount(board, x, y, DIRECT.HORIZONTAL) == 5
+                || getLinkCount(board, x, y, DIRECT.LEFT_TILT) == 5
+                || getLinkCount(board, x, y, DIRECT.RIGHT_TILT) == 5) {
             return true;
         }
 

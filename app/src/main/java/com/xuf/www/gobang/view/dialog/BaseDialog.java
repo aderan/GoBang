@@ -1,12 +1,13 @@
 package com.xuf.www.gobang.view.dialog;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.xuf.www.gobang.EventBus.BusProvider;
 
@@ -32,5 +33,14 @@ public class BaseDialog extends DialogFragment {
     public void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    public void dismiss() {
+        if (getFragmentManager() == null) {
+
+        } else {
+            super.dismiss();
+        }
     }
 }

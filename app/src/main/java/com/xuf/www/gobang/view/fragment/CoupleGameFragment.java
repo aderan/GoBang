@@ -1,23 +1,21 @@
 package com.xuf.www.gobang.view.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.xuf.www.gobang.R;
-import com.xuf.www.gobang.bean.Message;
 import com.xuf.www.gobang.bean.Point;
 import com.xuf.www.gobang.util.GameJudger;
-import com.xuf.www.gobang.util.MessageWrapper;
 import com.xuf.www.gobang.util.ToastUtil;
 import com.xuf.www.gobang.widget.GoBangBoard;
+
 
 /**
  * Created by Xuf on 2016/2/7.
@@ -75,7 +73,7 @@ public class CoupleGameFragment extends Fragment implements GoBangBoard.PutChess
                 mIsWhiteFirst = !mIsWhiteFirst;
                 mCurrentWhite = mIsWhiteFirst;
                 String buttonText;
-                if (mCurrentWhite){
+                if (mCurrentWhite) {
                     buttonText = "白子先手";
                 } else {
                     buttonText = "黑子先手";
