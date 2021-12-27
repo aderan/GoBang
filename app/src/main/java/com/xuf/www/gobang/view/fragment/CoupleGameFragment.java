@@ -5,11 +5,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.gc.materialdesign.views.ButtonRectangle;
 import com.xuf.www.gobang.R;
 import com.xuf.www.gobang.bean.Point;
 import com.xuf.www.gobang.util.GameJudger;
@@ -29,16 +29,14 @@ public class CoupleGameFragment extends Fragment implements GoBangBoard.PutChess
     private boolean mCurrentWhite;
 
     private GoBangBoard mGoBangBoard;
-    private ButtonRectangle mStartGame;
-    private ButtonRectangle mStartFirst;
+    private Button mStartGame;
+    private Button mStartFirst;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_couple_game, container, false);
-
         initView(view);
-
         return view;
     }
 
@@ -49,13 +47,13 @@ public class CoupleGameFragment extends Fragment implements GoBangBoard.PutChess
 
         mCurrentWhite = mIsWhiteFirst;
 
-        mStartGame = (ButtonRectangle) view.findViewById(R.id.btn_start_game);
+        mStartGame = (Button) view.findViewById(R.id.btn_start_game);
         mStartGame.setOnClickListener(this);
 
-        mStartFirst = (ButtonRectangle) view.findViewById(R.id.btn_start_first);
+        mStartFirst = (Button) view.findViewById(R.id.btn_start_first);
         mStartFirst.setOnClickListener(this);
 
-        ButtonRectangle exitGame = (ButtonRectangle) view.findViewById(R.id.btn_exit_game);
+        Button exitGame = (Button) view.findViewById(R.id.btn_exit_game);
         exitGame.setOnClickListener(this);
     }
 

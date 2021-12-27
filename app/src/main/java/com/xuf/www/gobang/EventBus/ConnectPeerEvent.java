@@ -2,18 +2,16 @@ package com.xuf.www.gobang.EventBus;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 
 /**
  * Created by Administrator on 2016/1/25.
  */
 public class ConnectPeerEvent {
 
-    public SalutDevice mSalutDevice;
-    public BluetoothDevice mBlueToothDevice;
+    public Device mDevice;
 
-    public ConnectPeerEvent(SalutDevice device, BluetoothDevice bluetoothDevice) {
-        mSalutDevice = device;
-        mBlueToothDevice = bluetoothDevice;
+    public ConnectPeerEvent(Device device) {
+        mDevice = device;
     }
 }

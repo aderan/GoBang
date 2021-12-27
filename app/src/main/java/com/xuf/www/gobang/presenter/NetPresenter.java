@@ -1,39 +1,24 @@
 package com.xuf.www.gobang.presenter;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.util.Log;
 
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 import com.xuf.www.gobang.bean.Message;
-import com.xuf.www.gobang.interator.NetInteractor;
-import com.xuf.www.gobang.interator.BlueToothInteractor;
 import com.xuf.www.gobang.interator.WhiteboardInteractor;
-import com.xuf.www.gobang.interator.WifiInteractor;
-import com.xuf.www.gobang.util.Constants;
 
 import java.util.List;
 
 /**
  * Created by Xuf on 2016/1/23.
  */
-public class NetPresenter implements INetInteratorCallback {
+public class NetPresenter implements INetInteractorCallback {
     private INetView mNetView;
-    private NetInteractor mNetInteractor;
+    private WhiteboardInteractor mNetInteractor;
 
-    private int mGameMode;
-
-    public NetPresenter(Context context, INetView netView, int gameMode) {
+    public NetPresenter(Context context, INetView netView) {
         mNetView = netView;
-        mGameMode = gameMode;
-        if (isWifiMode()) {
-            mNetInteractor = new WhiteboardInteractor(context, mNetView.getWhiteboard(), this);
-        } else {
-            mNetInteractor = new BlueToothInteractor(context, this);
-        }
-    }
-
-    private boolean isWifiMode() {
-        return mGameMode == Constants.WIFI_MODE;
+        mNetInteractor = new WhiteboardInteractor(context, mNetView.getWhiteboard(), this);
     }
 
     public void init() {
@@ -45,58 +30,48 @@ public class NetPresenter implements INetInteratorCallback {
     }
 
     public void startService() {
-        mNetInteractor.startNetService();
+        mNetInteractor.startHost();
     }
 
     public void stopService() {
-        mNetInteractor.stopNetService();
+        mNetInteractor.stopHost();
     }
 
-    public void sendToDevice(Message message, boolean isHost) {
-        mNetInteractor.sendToDevice(message, isHost);
+    public void sendToDevice(Message message) {
+        mNetInteractor.sendToDevice(message);
     }
 
     public void findPeers() {
         mNetInteractor.findPeers();
     }
 
-    public void connectToHost(SalutDevice salutHost, BluetoothDevice blueToothHost) {
-        mNetInteractor.connectToHost(salutHost, blueToothHost);
+    public void connectToHost(Device host) {
+        mNetInteractor.connectToHost(host);
     }
 
     @Override
-    public void onWifiDeviceConnected(SalutDevice device) {
+    public void onInitSuccess() {
+        mNetView.onInitSuccess();
+    }
+
+    @Override
+    public void onInitFailed() {
+        mNetView.onInitFailed("");
+    }
+
+    @Override
+    public void onDeviceConnected(Device device) {
         mNetView.onWifiDeviceConnected(device);
     }
 
     @Override
-    public void onBlueToothDeviceConnected() {
-        mNetView.onBlueToothDeviceConnected();
-    }
-
-    @Override
-    public void onBlueToothDeviceConnectFailed() {
-        mNetView.onBlueToothDeviceConnectFailed();
-    }
-
-    @Override
-    public void onStartWifiServiceFailed() {
+    public void onStartServiceFailed() {
         mNetView.onStartWifiServiceFailed();
     }
 
     @Override
-    public void onFindWifiPeers(List<SalutDevice> deviceList) {
+    public void onFindPeers(List<Device> deviceList) {
         mNetView.onFindWifiPeers(deviceList);
-    }
-
-    @Override
-    public void onGetPairedToothPeers(List<BluetoothDevice> deviceList) {
-        mNetView.onGetPairedToothPeers(deviceList);
-    }
-
-    @Override
-    public void onFindBlueToothPeers(List<BluetoothDevice> deviceList) {
-        mNetView.onFindBlueToothPeers(deviceList);
     }
 
     @Override
@@ -106,17 +81,12 @@ public class NetPresenter implements INetInteratorCallback {
 
     @Override
     public void onDataReceived(Object o) {
+        Log.e("Gobang", "message " + o.toString());
         mNetView.onDataReceived(o);
     }
 
     @Override
     public void onSendMessageFailed() {
         mNetView.onSendMessageFailed();
-    }
-
-    @Override
-    public void onMobileNotSupportDevice() {
-        String message = "抱歉，您的设备不支持wifi直连";
-        mNetView.onWifiInitFailed(message);
     }
 }

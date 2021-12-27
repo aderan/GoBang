@@ -1,10 +1,8 @@
 package com.xuf.www.gobang.interator;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.herewhite.sdk.AbstractRoomCallbacks;
@@ -15,19 +13,17 @@ import com.herewhite.sdk.WhiteSdkConfiguration;
 import com.herewhite.sdk.WhiteboardView;
 import com.herewhite.sdk.domain.AkkoEvent;
 import com.herewhite.sdk.domain.EventEntry;
-import com.herewhite.sdk.domain.FrequencyEventListener;
 import com.herewhite.sdk.domain.GlobalState;
 import com.herewhite.sdk.domain.Promise;
 import com.herewhite.sdk.domain.RoomPhase;
 import com.herewhite.sdk.domain.RoomState;
 import com.herewhite.sdk.domain.SDKError;
 import com.herewhite.sdk.domain.WhiteDisplayerState;
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 import com.xuf.www.gobang.bean.Message;
-import com.xuf.www.gobang.presenter.INetInteratorCallback;
+import com.xuf.www.gobang.presenter.INetInteractorCallback;
 import com.xuf.www.gobang.util.Constants;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -38,7 +34,7 @@ public class WhiteboardInteractor extends NetInteractor {
     private Handler handler = new Handler(Looper.getMainLooper());
     private static final String TAG = "WifiInteractor";
 
-    private INetInteratorCallback mCallback;
+    private INetInteractorCallback mCallback;
 
     private Context mContext;
     private WhiteboardView mWhiteboard;
@@ -47,163 +43,124 @@ public class WhiteboardInteractor extends NetInteractor {
     private RoomPhase mRoomPhase;
     private GameGlobalState mGameState = new GameGlobalState();
 
-    private boolean isHost = false;
+    private String userId;
 
-    public WhiteboardInteractor(Context context, WhiteboardView whiteboard, INetInteratorCallback callback) {
+    public WhiteboardInteractor(Context context, WhiteboardView whiteboard, INetInteractorCallback callback) {
         mContext = context;
         mCallback = callback;
         mWhiteboard = whiteboard;
     }
 
-    public boolean init() {
-        WhiteSdkConfiguration configuration = new WhiteSdkConfiguration(Constants.SIMPLE_APP_ID, true);
-        mWhiteSdk = new WhiteSdk(mWhiteboard, mContext, configuration);
+    public void init() {
+        userId = UserManager.getUserID();
+
+        WhiteSdkConfiguration conf = new WhiteSdkConfiguration(Constants.SIMPLE_APP_ID, true);
+        mWhiteSdk = new WhiteSdk(mWhiteboard, mContext, conf);
         WhiteDisplayerState.setCustomGlobalStateClass(GameGlobalState.class);
-        return true;
-    }
 
-    public void unInit() {
-
-    }
-
-    public void startNetService() {
-        RoomParams roomParams = new RoomParams(Constants.SIMPLE_ROOM_UUID,
+        RoomParams roomParams = new RoomParams(
+                Constants.SIMPLE_ROOM_UUID,
                 Constants.SIMPLE_ROOM_TOKEN,
-                Constants.SIMPLE_UID_HOST);
+                userId
+        );
 
         mWhiteSdk.joinRoom(roomParams, new AbstractRoomCallbacks() {
             @Override
             public void onPhaseChanged(RoomPhase phase) {
                 super.onPhaseChanged(phase);
                 mRoomPhase = phase;
-                updateHost();
             }
 
             @Override
             public void onRoomStateChanged(RoomState modifyState) {
                 super.onRoomStateChanged(modifyState);
                 if (modifyState.getGlobalState() != null) {
-                    mGameState = (GameGlobalState) modifyState.getGlobalState();
-                    if (!isEmpty(mGameState.playerClient)) {
-                        mCallback.onWifiDeviceConnected(null);
-                    }
+                    updateGameState();
                 }
             }
         }, new Promise<Room>() {
             @Override
             public void then(Room room) {
                 mRoom = room;
-                updateHost();
-                mRoom.addHighFrequencyEventListener("Game", new FrequencyEventListener() {
-                    @Override
-                    public void onEvent(EventEntry[] events) {
-                        for (EventEntry event : events) {
-                            Map<String, Object> map = (Map<String, Object>) event.getPayload();
-                            GameEvent gameEvent = new GameEvent((boolean) map.get("toHost"), (String) map.get("data"));
-                            if (gameEvent.toHost) {
-                                mCallback.onDataReceived(gameEvent.data);
-                            }
+                mRoom.addHighFrequencyEventListener(EVENT_NAME, events -> {
+                    for (EventEntry event : events) {
+                        Map<String, Object> map = (Map<String, Object>) event.getPayload();
+                        GameEvent gameEvent = new GameEvent((String) map.get("uid"), (String) map.get("data"));
+                        if (!userId.equals(gameEvent.uid)) {
+                            mCallback.onDataReceived(gameEvent.data);
                         }
                     }
                 }, 1000);
+                updateGameState();
+                mCallback.onInitSuccess();
             }
 
             @Override
             public void catchEx(SDKError t) {
-                mCallback.onStartWifiServiceFailed();
+                mCallback.onInitFailed();
             }
         });
+    }
+
+    private void updateGameState() {
+        mGameState = (GameGlobalState) mRoom.getGlobalState();
+        if (userId.equals(mGameState.playerHost)) {
+            if (mGameState.state == GameGlobalState.STATE_PAIRED) {
+                mCallback.onDeviceConnected(null);
+            }
+        }
+    }
+
+    public void unInit() {
+        mWhiteboard.removeAllViews();
+        mWhiteboard.destroy();
+    }
+
+    public void startHost() {
+        if (mRoomPhase != null && mRoomPhase == RoomPhase.connected && mRoom != null) {
+            GameGlobalState gameState = (GameGlobalState) mRoom.getGlobalState();
+
+            gameState.state = GameGlobalState.STATE_PAIRING;
+            gameState.playerHost = userId;
+            gameState.playerClient = "";
+            mRoom.setGlobalState(gameState);
+        }
     }
 
     private boolean isEmpty(String str) {
         return str == null || str.equals("");
     }
 
-    private void updateHost() {
+    private void connectHost() {
         if (mRoomPhase != null && mRoomPhase == RoomPhase.connected && mRoom != null) {
             GameGlobalState gameState = (GameGlobalState) mRoom.getRoomState().getGlobalState();
-            gameState.playerHost = Constants.SIMPLE_UID_HOST;
-            gameState.playerClient = "";
+            gameState.state = GameGlobalState.STATE_PAIRED;
+            gameState.playerClient = userId;
             mRoom.setGlobalState(gameState);
         }
     }
 
-    private void updateClient() {
-        if (mRoomPhase != null && mRoomPhase == RoomPhase.connected && mRoom != null) {
-            GameGlobalState gameState = (GameGlobalState) mRoom.getRoomState().getGlobalState();
-            gameState.playerClient = Constants.SIMPLE_UID_Client;
-            mRoom.setGlobalState(gameState);
-        }
-    }
-
-
-    public void stopNetService() {
+    public void stopHost() {
         mRoom.disconnect();
     }
 
     public void findPeers() {
-        RoomParams roomParams = new RoomParams(Constants.SIMPLE_ROOM_UUID,
-                Constants.SIMPLE_ROOM_TOKEN,
-                Constants.SIMPLE_UID_Client);
+        new Thread(() -> {
+            for (int i = 0; i < 10; i++) {
+                if (mGameState.state == GameGlobalState.STATE_PAIRING) {
+                    Device device = new Device();
+                    device.name = mGameState.playerHost;
+                    device.uuid = mGameState.playerHost;
 
-        mWhiteSdk.joinRoom(roomParams, new AbstractRoomCallbacks() {
-            @Override
-            public void onPhaseChanged(RoomPhase phase) {
-                super.onPhaseChanged(phase);
-                mRoomPhase = phase;
-                updateClient();
-            }
-
-            @Override
-            public void onRoomStateChanged(RoomState modifyState) {
-                super.onRoomStateChanged(modifyState);
-                if (modifyState.getGlobalState() != null) {
-                    mGameState = (GameGlobalState) modifyState.getGlobalState();
+                    post(() -> mCallback.onFindPeers(Collections.singletonList(device)));
+                    return;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
                 }
             }
-        }, new Promise<Room>() {
-            @Override
-            public void then(Room room) {
-                mRoom = room;
-                updateClient();
-                mRoom.addHighFrequencyEventListener("Game", new FrequencyEventListener() {
-                    @Override
-                    public void onEvent(EventEntry[] events) {
-                        for (EventEntry event : events) {
-                            Map<String, Object> map = (Map<String, Object>) event.getPayload();
-                            GameEvent gameEvent = new GameEvent((boolean) map.get("toHost"), (String) map.get("data"));
-                            if (!gameEvent.toHost) {
-                                mCallback.onDataReceived(gameEvent.data);
-                            }
-                        }
-                    }
-                }, 1000);
-            }
-
-            @Override
-            public void catchEx(SDKError t) {
-                mCallback.onPeersNotFound();
-            }
-        });
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    if (mGameState.playerHost != null) {
-                        SalutDevice device = new SalutDevice();
-                        device.deviceName = "Host";
-
-                        post(() -> mCallback.onFindWifiPeers(Collections.singletonList(device)));
-                        return;
-                    }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                post(() -> mCallback.onPeersNotFound());
-            }
+            post(() -> mCallback.onPeersNotFound());
         }).start();
     }
 
@@ -211,43 +168,36 @@ public class WhiteboardInteractor extends NetInteractor {
         handler.post(runnable);
     }
 
-    public void connectToHost(SalutDevice salutHost, BluetoothDevice blueToothHost) {
-        Log.i(TAG, "registerWithHost, registered success");
-//        mCallback.onWifiDeviceConnected(salutHost);
-//        mSendToDevice = salutHost;
-//        mSalut.registerWithHost(salutHost, new SalutCallback() {
-//            @Override
-//            public void call() {
-//                Log.i(TAG, "registerWithHost, registered success");
-//            }
-//        }, new SalutCallback() {
-//            @Override
-//            public void call() {
-//                Log.i(TAG, "registerWithHost, registered failed");
-//            }
-//        });
+    public void connectToHost(Device host) {
+        connectHost();
     }
 
-    public void sendToDevice(Message message, boolean isHost) {
+    public void sendToDevice(Message message) {
         try {
             String data = LoganSquare.serialize(message);
-            mRoom.dispatchMagixEvent(new AkkoEvent("Game", new GameEvent(!isHost, data)));
-        } catch (IOException e) {
-            e.printStackTrace();
+            mRoom.dispatchMagixEvent(new AkkoEvent(EVENT_NAME, new GameEvent(userId, data)));
+        } catch (Exception ignore) {
         }
     }
 
     class GameGlobalState extends GlobalState {
+        public static final int STATE_IDLE = 0;
+        public static final int STATE_PAIRING = 1;
+        public static final int STATE_PAIRED = 2;
+
+        public int state;
         public String playerHost;
         public String playerClient;
     }
 
+    private static final String EVENT_NAME = "Game";
+
     class GameEvent {
-        public boolean toHost;
+        public String uid;
         public String data;
 
-        public GameEvent(boolean isHost, String data) {
-            this.toHost = isHost;
+        public GameEvent(String uid, String data) {
+            this.uid = uid;
             this.data = data;
         }
     }

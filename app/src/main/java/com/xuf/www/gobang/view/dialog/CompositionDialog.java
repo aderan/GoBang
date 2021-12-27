@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.xuf.www.gobang.R;
 import com.xuf.www.gobang.EventBus.BusProvider;
 import com.xuf.www.gobang.EventBus.WifiCancelCompositionEvent;
 import com.xuf.www.gobang.EventBus.WifiCreateGameEvent;
 import com.xuf.www.gobang.EventBus.WifiJoinGameEvent;
+import com.xuf.www.gobang.R;
 
 /**
  * Created by lenov0 on 2015/12/26.
@@ -27,9 +27,9 @@ public class CompositionDialog extends BaseDialog implements View.OnClickListene
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.dialog_composition, container, false);
 
-        ButtonRectangle createGame = (ButtonRectangle) view.findViewById(R.id.btn_create_game);
-        ButtonRectangle joinGame = (ButtonRectangle) view.findViewById(R.id.btn_join_game);
-        ButtonRectangle cancel = (ButtonRectangle) view.findViewById(R.id.btn_cancel);
+        Button createGame = (Button) view.findViewById(R.id.btn_create_game);
+        Button joinGame = (Button) view.findViewById(R.id.btn_join_game);
+        Button cancel = (Button) view.findViewById(R.id.btn_cancel);
 
         createGame.setOnClickListener(this);
         joinGame.setOnClickListener(this);

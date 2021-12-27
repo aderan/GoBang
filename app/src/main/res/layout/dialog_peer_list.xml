@@ -4,40 +4,39 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="250dp"
-        android:layout_height="300dp">
+        android:layout_height="300dp"
+        android:orientation="vertical">
 
         <TextView
-            android:text="加入棋局"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:textSize="18sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:text="加入棋局"
+            android:textSize="18sp" />
 
         <ListView
             android:id="@+id/lv_peers"
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_cancel"
-            android:text="取消"
-            android:background="#1E88E5"
-            android:layout_gravity="center_horizontal"
             android:layout_width="100dp"
             android:layout_height="55dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:background="#1E88E5"
+            android:text="取消" />
 
     </LinearLayout>
 
-    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+    <ProgressBar
         android:id="@+id/progressBarCircular"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_centerInParent="true"
         android:background="#1E88E5" />
-
 </RelativeLayout>

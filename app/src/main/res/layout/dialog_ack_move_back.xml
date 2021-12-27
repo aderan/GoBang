@@ -5,8 +5,8 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     android:paddingTop="5dp"
+    android:paddingRight="10dp"
     android:paddingBottom="5dp">
 
     <TextView
@@ -23,20 +23,18 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_agree"
             android:layout_width="100dp"
             android:layout_height="55dp"
             android:background="#1E88E5"
             android:text="同意" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_disagree"
             android:layout_width="100dp"
             android:layout_height="55dp"
             android:background="#1E88E5"
             android:text="不同意" />
-
     </LinearLayout>
-
 </LinearLayout>

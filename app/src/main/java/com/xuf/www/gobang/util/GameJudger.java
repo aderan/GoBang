@@ -5,7 +5,7 @@ package com.xuf.www.gobang.util;
  */
 public class GameJudger {
 
-    private static enum DIRECT {
+    private enum DIRECT {
         VERTICAL,
         HORIZONTAL,
         LEFT_TILT,

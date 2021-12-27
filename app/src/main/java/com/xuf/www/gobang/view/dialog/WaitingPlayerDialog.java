@@ -1,17 +1,18 @@
 package com.xuf.www.gobang.view.dialog;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.xuf.www.gobang.R;
+import androidx.annotation.Nullable;
+
 import com.xuf.www.gobang.EventBus.BusProvider;
 import com.xuf.www.gobang.EventBus.WifiBeginWaitingEvent;
 import com.xuf.www.gobang.EventBus.WifiCancelWaitingEvent;
+import com.xuf.www.gobang.R;
 
 /**
  * Created by lenov0 on 2015/12/28.
@@ -19,7 +20,7 @@ import com.xuf.www.gobang.EventBus.WifiCancelWaitingEvent;
 public class WaitingPlayerDialog extends BaseDialog {
     public static final String TAG = "WaitingPlayerDialog";
 
-    private ButtonRectangle mBeginButton;
+    private Button mBeginButton;
 
     @Nullable
     @Override
@@ -27,20 +28,20 @@ public class WaitingPlayerDialog extends BaseDialog {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         View view = inflater.inflate(R.layout.dialog_waiting_player, container, false);
-        mBeginButton = (ButtonRectangle)view.findViewById(R.id.btn_begin);
+        mBeginButton = (Button) view.findViewById(R.id.btn_begin);
         mBeginButton.setEnabled(false);
-        ButtonRectangle CancelButton = (ButtonRectangle)view.findViewById(R.id.btn_cancel);
+        Button CancelButton = (Button) view.findViewById(R.id.btn_cancel);
         CancelButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 BusProvider.getInstance().post(new WifiCancelWaitingEvent());
-             }
-         });
+            @Override
+            public void onClick(View view) {
+                BusProvider.getInstance().post(new WifiCancelWaitingEvent());
+            }
+        });
 
         return view;
     }
 
-    public void setBeginEnable(){
+    public void setBeginEnable() {
         mBeginButton.setEnabled(true);
         mBeginButton.setOnClickListener(new View.OnClickListener() {
             @Override

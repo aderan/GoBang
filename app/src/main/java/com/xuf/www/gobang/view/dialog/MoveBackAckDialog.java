@@ -1,15 +1,15 @@
 package com.xuf.www.gobang.view.dialog;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.gc.materialdesign.views.ButtonRectangle;
+import androidx.annotation.Nullable;
+
 import com.xuf.www.gobang.EventBus.BusProvider;
 import com.xuf.www.gobang.EventBus.MoveBackAckEvent;
-import com.xuf.www.gobang.EventBus.RestartGameAckEvent;
 import com.xuf.www.gobang.R;
 
 /**
@@ -25,7 +25,7 @@ public class MoveBackAckDialog extends BaseDialog {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.dialog_ack_move_back, container, false);
 
-        ButtonRectangle agree = (ButtonRectangle) view.findViewById(R.id.btn_agree);
+        Button agree = (Button) view.findViewById(R.id.btn_agree);
         agree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -33,7 +33,7 @@ public class MoveBackAckDialog extends BaseDialog {
             }
         });
 
-        ButtonRectangle disagree = (ButtonRectangle) view.findViewById(R.id.btn_disagree);
+        Button disagree = (Button) view.findViewById(R.id.btn_disagree);
         disagree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

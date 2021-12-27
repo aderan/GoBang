@@ -1,17 +1,16 @@
 package com.xuf.www.gobang.view.fragment;
 
-import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import androidx.annotation.Nullable;
 
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.gc.materialdesign.views.ButtonRectangle;
 import com.herewhite.sdk.WhiteboardView;
-import com.peak.salut.SalutDevice;
 import com.squareup.otto.Subscribe;
 import com.xuf.www.gobang.EventBus.ConnectPeerEvent;
 import com.xuf.www.gobang.EventBus.ExitGameAckEvent;
@@ -24,6 +23,7 @@ import com.xuf.www.gobang.EventBus.WifiCancelWaitingEvent;
 import com.xuf.www.gobang.EventBus.WifiCreateGameEvent;
 import com.xuf.www.gobang.EventBus.WifiJoinGameEvent;
 import com.xuf.www.gobang.R;
+import com.xuf.www.gobang.bean.Device;
 import com.xuf.www.gobang.bean.Message;
 import com.xuf.www.gobang.bean.Point;
 import com.xuf.www.gobang.presenter.INetView;
@@ -60,16 +60,12 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
 
     private DialogCenter mDialogCenter;
     private GoBangBoard mBoard;
-    private ButtonRectangle mMoveBack;
+    private Button mMoveBack;
 
-    private static final String NET_MODE = "netMode";
     private WhiteboardView mWhiteboard;
 
-    public static NetGameFragment newInstance(int netMode) {
+    public static NetGameFragment newInstance() {
         NetGameFragment netGameFragment = new NetGameFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(NET_MODE, netMode);
-        netGameFragment.setArguments(bundle);
         return netGameFragment;
     }
 
@@ -98,13 +94,13 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
         mBoard.setOnTouchListener(this);
         mBoard.setPutChessListener(this);
 
-        ButtonRectangle restart = (ButtonRectangle) view.findViewById(R.id.btn_restart);
+        Button restart = (Button) view.findViewById(R.id.btn_restart);
         restart.setOnClickListener(this);
 
-        ButtonRectangle exitGame = (ButtonRectangle) view.findViewById(R.id.btn_exit);
+        Button exitGame = (Button) view.findViewById(R.id.btn_exit);
         exitGame.setOnClickListener(this);
 
-        mMoveBack = (ButtonRectangle) view.findViewById(R.id.btn_move_back);
+        mMoveBack = (Button) view.findViewById(R.id.btn_move_back);
         mMoveBack.setOnClickListener(this);
         mMoveBack.setText(makeMoveBackString());
 
@@ -114,9 +110,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     private void init() {
         mDialogCenter = new DialogCenter(getActivity());
         mDialogCenter.showCompositionDialog();
-        Bundle bundle = getArguments();
-        int gameMode = bundle.getInt(NET_MODE);
-        mNetPresenter = new NetPresenter(getActivity(), this, gameMode);
+        mNetPresenter = new NetPresenter(getActivity(), this);
         mNetPresenter.init();
         mOperationQueue = new OperationQueue();
     }
@@ -136,7 +130,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     }
 
     private void sendMessage(Message message) {
-        mNetPresenter.sendToDevice(message, mIsHost);
+        mNetPresenter.sendToDevice(message);
     }
 
     private void moveBackReq() {
@@ -159,37 +153,18 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     }
 
     @Override
-    public void onGetPairedToothPeers(List<BluetoothDevice> deviceList) {
-        mDialogCenter.updateBlueToothPeers(deviceList, false);
+    public void onInitSuccess() {
+        ToastUtil.showShort(getActivity(), "Init Success");
     }
 
     @Override
-    public void onFindBlueToothPeers(List<BluetoothDevice> deviceList) {
-        mDialogCenter.updateBlueToothPeers(deviceList, true);
-    }
-
-    @Override
-    public void onBlueToothDeviceConnected() {
-        ToastUtil.showShort(getActivity(), "蓝牙连接成功");
-        if (mIsHost) {
-            mDialogCenter.enableWaitingPlayerDialogsBegin();
-        }
-    }
-
-    @Override
-    public void onBlueToothDeviceConnectFailed() {
-        ToastUtil.showShort(getActivity(), "蓝牙连接失败");
-        mCanClickConnect = true;
-    }
-
-    @Override
-    public void onWifiInitFailed(String message) {
+    public void onInitFailed(String message) {
         ToastUtil.showShort(getActivity(), message);
         getActivity().finish();
     }
 
     @Override
-    public void onWifiDeviceConnected(SalutDevice device) {
+    public void onWifiDeviceConnected(Device device) {
         ToastUtil.showShort(getActivity(), "onWifiDeviceConnected");
         mDialogCenter.enableWaitingPlayerDialogsBegin();
     }
@@ -200,14 +175,14 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     }
 
     @Override
-    public void onFindWifiPeers(List<SalutDevice> deviceList) {
+    public void onFindWifiPeers(List<Device> deviceList) {
         mDialogCenter.updateWifiPeers(deviceList);
     }
 
     @Override
     public void onPeersNotFound() {
         ToastUtil.showShort(getActivity(), "found no peers");
-        mDialogCenter.updateWifiPeers(new ArrayList<SalutDevice>());
+        mDialogCenter.updateWifiPeers(new ArrayList<Device>());
     }
 
     @Override
@@ -372,7 +347,7 @@ public class NetGameFragment extends BaseGameFragment implements INetView, GoBan
     @Subscribe()
     public void onConnectPeer(ConnectPeerEvent event) {
         if (mCanClickConnect) {
-            mNetPresenter.connectToHost(event.mSalutDevice, event.mBlueToothDevice);
+            mNetPresenter.connectToHost(event.mDevice);
             mCanClickConnect = false;
         }
     }

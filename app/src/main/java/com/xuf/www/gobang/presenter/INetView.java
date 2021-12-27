@@ -3,7 +3,7 @@ package com.xuf.www.gobang.presenter;
 import android.bluetooth.BluetoothDevice;
 
 import com.herewhite.sdk.WhiteboardView;
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 
 import java.util.List;
 
@@ -11,21 +11,15 @@ import java.util.List;
  * Created by Xuf on 2016/1/23.
  */
 public interface INetView {
-    void onWifiInitFailed(String message);
+    void onInitSuccess();
 
-    void onWifiDeviceConnected(SalutDevice device);
+    void onInitFailed(String message);
 
-    void onBlueToothDeviceConnected();
-
-    void onBlueToothDeviceConnectFailed();
+    void onWifiDeviceConnected(Device device);
 
     void onStartWifiServiceFailed();
 
-    void onFindWifiPeers(List<SalutDevice> deviceList);
-
-    void onGetPairedToothPeers(List<BluetoothDevice> deviceList);
-
-    void onFindBlueToothPeers(List<BluetoothDevice> deviceList);
+    void onFindWifiPeers(List<Device> deviceList);
 
     void onPeersNotFound();
 

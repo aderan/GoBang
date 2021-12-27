@@ -28,7 +28,7 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_exit"
             android:layout_width="100dp"
             android:layout_height="55dp"
@@ -36,7 +36,7 @@
             android:background="#1E88E5"
             android:text="结束游戏" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_move_back"
             android:layout_width="100dp"
             android:layout_height="55dp"
@@ -44,7 +44,7 @@
             android:background="#1E88E5"
             android:text="悔  棋" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <Button
             android:id="@+id/btn_restart"
             android:layout_width="100dp"
             android:layout_height="55dp"

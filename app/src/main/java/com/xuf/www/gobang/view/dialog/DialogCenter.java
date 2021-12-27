@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 
 import java.util.List;
 
@@ -68,12 +68,8 @@ public class DialogCenter {
         mPeersDialog.dismiss();
     }
 
-    public void updateWifiPeers(List<SalutDevice> data) {
+    public void updateWifiPeers(List<Device> data) {
         mPeersDialog.updateWifiPeers(data);
-    }
-
-    public void updateBlueToothPeers(List<BluetoothDevice> data, boolean append) {
-        mPeersDialog.updateBlueToothPeers(data, append);
     }
 
     public void showRestartWaitingDialog() {

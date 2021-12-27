@@ -1,8 +1,6 @@
 package com.xuf.www.gobang.interator;
 
-import android.bluetooth.BluetoothDevice;
-
-import com.peak.salut.SalutDevice;
+import com.xuf.www.gobang.bean.Device;
 import com.xuf.www.gobang.bean.Message;
 
 /**
@@ -10,23 +8,23 @@ import com.xuf.www.gobang.bean.Message;
  */
 public class NetInteractor {
 
-    public boolean init() {
-        return true;
+    public void init() {
+
     }
 
     public void unInit() {
 
     }
 
-    public void startNetService() {
+    public void startHost() {
 
     }
 
-    public void stopNetService() {
+    public void stopHost() {
 
     }
 
-    public void sendToDevice(Message message, boolean isHost) {
+    public void sendToDevice(Message message) {
 
     }
 
@@ -34,7 +32,7 @@ public class NetInteractor {
 
     }
 
-    public void connectToHost(SalutDevice salutHost, BluetoothDevice blueToothHost) {
+    public void connectToHost(Device host) {
 
     }
 }

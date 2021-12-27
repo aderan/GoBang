@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.xuf.www.gobang.R;
 import com.xuf.www.gobang.EventBus.BusProvider;
 import com.xuf.www.gobang.EventBus.ExitGameAckEvent;
+import com.xuf.www.gobang.R;
 
 /**
  * Created by Administrator on 2016/1/27.
  */
-public class ExitAckDialog extends BaseDialog{
+public class ExitAckDialog extends BaseDialog {
     public static final String TAG = "ExitAckDialog";
 
     @Nullable
@@ -24,7 +24,7 @@ public class ExitAckDialog extends BaseDialog{
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.dialog_ack_exit, container, false);
 
-        ButtonRectangle exit = (ButtonRectangle) view.findViewById(R.id.btn_exit);
+        Button exit = (Button) view.findViewById(R.id.btn_exit);
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,7 +32,7 @@ public class ExitAckDialog extends BaseDialog{
             }
         });
 
-        ButtonRectangle cancel = (ButtonRectangle) view.findViewById(R.id.btn_cancel);
+        Button cancel = (Button) view.findViewById(R.id.btn_cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
